@@ -1,0 +1,21 @@
+{
+  "name": "rudderstack-automation-flows",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "wdio": "wdio run ./wdio.conf.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@wdio/cli": "^9.19.0",
+    "@wdio/cucumber-framework": "^9.19.0",
+    "@wdio/local-runner": "^9.19.0",
+    "@wdio/spec-reporter": "^9.19.0",
+    "@wdio/visual-service": "^9.0.0"
+  }
+}
