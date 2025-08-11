@@ -2,13 +2,15 @@ const fs=require('fs');
 
 let dynamicDataFilePath="";
 let currentExecutionId="";
-const setDynamicDataFilePath=(filePath)=>{
+
+const setDynamicDataFilePath=async (filePath)=>{
     dynamicDataFilePath=filePath+"/dyanmicTestData.json";
 }
 
-const setExecutionId=(testExecutionId)=>{
+const setExecutionId=async (testExecutionId)=>{
    currentExecutionId=testExecutionId;
 }
+
 
 const saveTestData=async(key, value)=>{
     let testData={};
@@ -19,7 +21,10 @@ const saveTestData=async(key, value)=>{
         }
     }
     const testExecutionId=currentExecutionId;
-    if(testExecutionId!=""){
+    if(testExecutionId!==""){
+        if (!testData[testExecutionId]) {
+          testData[testExecutionId] = {};
+        }
         testData[testExecutionId][key]=value;
         fs.writeFileSync(dynamicDataFilePath, JSON.stringify(testData, null, 2), 'utf8');
     }else{
