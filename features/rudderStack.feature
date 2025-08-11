@@ -13,3 +13,5 @@ Then Send a HTTP POST API request to 'screen' with 'SCREEN' payload and Verify R
 Then Send a HTTP POST API request to 'group' with 'GROUP' payload and Verify Response Code
 Then Send a HTTP POST API request to 'alias' with 'ALIAS' payload and Verify Response Code
 Then Send a HTTP POST API request to 'batch' with 'BATCH' payload and Verify Response Code
+When Click on the Webhook Destination 'Webhook avas' and Click on the Tab 'Events'
+Then Read and Save the count of delivered and failed events
