@@ -9,7 +9,12 @@ class RudderStackPageObject {
         this.browser = browserInstance;
          this.dataPlaneSpanXpath="//span[text()='Data Plane']/following-sibling::div/div/span";
          this.askAIBetaPopUp="//button[@type='button' and @aria-label='Close']";
-         this.writeKeySpanXpath="//span[starts-with(text(), 'Write key')]"
+         this.writeKeySpanXpath="//span[starts-with(text(), 'Write key')]";
+         this.webHookDestinationButton="//span[text()='{destinationName}']";
+         this.webHookDestinationSubTab="//div[@role='tab' and text()='{tabName}']"
+         this.desEventCountXpath="//span[text()='{EventName}']/following-sibling::div/h2/span";
+         this.eventsDetailsFailedRadioToggleButton="//div[@class='ant-segmented-item-label' and @title='Failures']";
+         this.tableAllRowsColumnDataXPath="//tbody/tr/td[@class='ant-table-cell'][{columnNumber}]/span";
     }
 
     async readWriteKeyAndSave(keyName){
@@ -72,6 +77,61 @@ async sendHTTPPostRequest(endpointName, payloadName){
     );
   console.log('Response status is 200 as expected');
 
+}
+
+
+async goToWebHooksAndClickTab(webHookName, tabName){
+    let webHookDesXpath=this.webHookDestinationButton.replace("{destinationName}", webHookName);
+    const webHookDesEle = await this.browser.$(webHookDesXpath);
+    await webHookDesEle.click();
+    await WDioHelper.takeScreenshot(webHookName);
+    
+    let webHookDesTabXpath=this.webHookDestinationSubTab.replace("{tabName}", tabName); await this.browser.waitUntil(
+    async () => await (await this.browser.$(webHookDesTabXpath)).isDisplayed(),
+        {
+            timeout: 15000,
+            timeoutMsg: `Destination WebHook Tab Button ${tabName} was not visible within 15s`
+        });
+    const webHookDesTabEle = await this.browser.$(webHookDesTabXpath);
+    await webHookDesTabEle.click();
+    const newWebHookDesTabEle = await this.browser.$(webHookDesTabXpath);
+    const isTabClick = await newWebHookDesTabEle.getAttribute('aria-selected');
+    if(isTabClick=="true"){
+        console.log(`Web Hook Destination Tab ${tabName} click successfully`);
+        await WDioHelper.takeScreenshot(tabName);
+    }else{
+        console.log(`Issue while clicking Web Hook Destination Tab ${tabName}`);
+    }
+    
+
+}
+
+async readAndSaveDeliveredCounts(){
+    let destinationDeliveryCountSpanXpath=this.desEventCountXpath.replace("{EventName}","Delivered");
+     await this.browser.waitUntil(
+            async () => {
+                const el = await this.browser.$(destinationDeliveryCountSpanXpath);
+                return await el.isDisplayed();
+            },
+            {
+                timeout: 15000,
+                timeoutMsg:`Delivery Count is not visible within 15s`
+            }
+        )
+    const desDelCountEle = await this.browser.$(destinationDeliveryCountSpanXpath);
+    let deliveredCount=await desDelCountEle.getText();
+    console.log("Delivered Count : ", deliveredCount);
+    await saveTestData("DeliveryCount", deliveredCount);
+
+}
+
+async readAndSaveFailedEvents(){
+    let destinationFailedCountSpanXpath=this.desEventCountXpath.replace("{EventName}",'Failed');
+    const desFailedCountEle = await this.browser.$(destinationFailedCountSpanXpath);
+    let failedCount=await desFailedCountEle.getText();
+    console.log("Failed Count : ", failedCount);
+    await saveTestData("FailedCount", failedCount);
+    await WDioHelper.takeScreenshot("EventsCount");
 }
 
 }
