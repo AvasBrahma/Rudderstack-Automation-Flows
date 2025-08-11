@@ -1,4 +1,7 @@
-require("dotenv").config();
+require('dotenv').config({
+  path: `.env.${process.env.TEST_ENV || 'qa'}`
+});
+
 module.exports = {
     browserSetup: {
         browserName: process.env.BROWSER || 'chrome'
