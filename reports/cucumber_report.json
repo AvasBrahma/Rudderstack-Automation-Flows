@@ -1,0 +1,50 @@
+[
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "sample-test;navigate-to-home-page",
+        "keyword": "Scenario",
+        "line": 5,
+        "name": "navigate to home page",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1340497292
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 6,
+            "name": "Navigate to the home page",
+            "match": {
+              "location": "step-definitions/commonSteps.js:5"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1637357583
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@Test1",
+            "line": 4
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "sample-test",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Sample Test",
+    "tags": [],
+    "uri": "features/sampletest.feature"
+  }
+]
