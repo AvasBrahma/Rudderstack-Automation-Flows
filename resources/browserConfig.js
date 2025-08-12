@@ -7,7 +7,17 @@ module.exports = {
         browserName: process.env.BROWSER || 'chrome'
     },
     browserOptions: {
-        chrome: { 'goog:chromeOptions': { args: ['--start-maximized'] } },
+        chrome: { 'goog:chromeOptions': { 
+            args: [
+                '--headless=new',
+                '--start-maximized',
+                '--no-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--disable-infobars',
+                '--disable-extensions',
+                '--window-size=1920,1080'
+            ] } },
         firefox: { 'moz:firefoxOptions': { args: [] } }
     }
 };
