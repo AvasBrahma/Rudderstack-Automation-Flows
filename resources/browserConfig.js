@@ -16,7 +16,8 @@ module.exports = {
                 '--disable-gpu',
                 '--disable-infobars',
                 '--disable-extensions',
-                '--window-size=1920,1080'
+                '--window-size=1920,1080',
+                `--user-data-dir=/tmp/chrome-user-data-${Date.now()}` 
             ] } },
         firefox: { 'moz:firefoxOptions': { args: [] } }
     }
