@@ -1,5 +1,6 @@
 require("dotenv").config();
 const { WDioHelper }=require('../utils/wdioHelper');
+const { logger } = require('../utils/loggerHelper');
 
 class AuthPageObject {
     constructor(browserInstance) {
@@ -10,12 +11,7 @@ class AuthPageObject {
         this.logInButtonXPath="//button[@type='button']/span[normalize-space(text())='Log in']";
         this.hyperLinkIWillDoLater="//a[text()=\"I'll do this later\"]";
         this.goToDashBoardButton="//button[@type='button']/span[normalize-space(text())='Go to dashboard']";
-
     }
-
-    get usernameInput() { return this.browser.$('#username'); }
-    get passwordInput() { return this.browser.$('#password'); }
-    get loginButton() { return this.browser.$('#login'); }
 
     async navigateToHomePage() {
         await this.browser.url(this.url);
@@ -26,38 +22,38 @@ class AuthPageObject {
     }
 
     async login() {
+        try {
         await this.browser.$(this.emailIdCssSel).setValue(process.env.email);
         await this.browser.$(this.passwordCssSel).setValue(process.env.password);
         await WDioHelper.takeScreenshot("loginPage");
-        await this.browser.$(this.logInButtonXPath).click();
+        await this.browser.$(this.logInButtonXPath).click();  
+        } catch (error) {
+            throw new Error(`Fail: Error while entering username & password in login page`, error.message);
+        }
     }
 
     async skip2FA(){
-        await this.browser.waitUntil(
-        async () => await (await this.browser.$(this.hyperLinkIWillDoLater)).isDisplayed(),
-        {
-            timeout: 15000,
-            timeoutMsg: `"I'll do this later" link was not visible within 15s`
-        }
-    );
-          //await this.browser.$(this.hyperLinkIWillDoLater).waitForDisplayed({ timeout: 5000 });
+        try {
+          await WDioHelper.waitForElementVisible(this.hyperLinkIWillDoLater,"I'll do this later");
           const skipFALinkEle = await this.browser.$(this.hyperLinkIWillDoLater);
           await skipFALinkEle.waitForClickable();
           await WDioHelper.takeScreenshot("skip2FAWarn");
-          await skipFALinkEle.click();
+          await skipFALinkEle.click(); 
+        } catch (error) {
+            throw new Error(`Fail: Error while skipping 2FA Alert`, error.message);
+        }
+        
     }
     async goToDashBoard(){
-          await this.browser.waitUntil(
-        async () => await (await this.browser.$(this.goToDashBoardButton)).isDisplayed(),
-        {
-            timeout: 15000,
-            timeoutMsg: `"Go To DashBoard Button was not visible within 15s`
-        }
-    );
+        try {
+        await WDioHelper.waitForElementVisible(this.goToDashBoardButton,"Go To DashBoard Button");
         const goToDashBoardEle = await this.browser.$(this.goToDashBoardButton);
         await goToDashBoardEle.waitForClickable();
         await WDioHelper.takeScreenshot("goToDashBoardButton");
         await goToDashBoardEle.click();
+        } catch (error) {
+            throw new Error(`Fail: Error while trying to click Go To DashBoard Link`, error.message);
+        }
     }
 }
 
