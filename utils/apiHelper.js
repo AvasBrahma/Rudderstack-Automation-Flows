@@ -1,6 +1,8 @@
 const axios = require('axios');
 const path=require('path');
 const fs=require('fs');
+const assert = require('assert');
+const { logger } = require("./loggerHelper");
 
 class APIHelper{
     
@@ -9,6 +11,7 @@ class APIHelper{
     static reqPayload="";
     static response="";
     static headersMap = new Map();
+    static responseCode=null;
 
     static async setBaseURL(baseURL){
        this.baseURL=baseURL;
@@ -24,7 +27,7 @@ class APIHelper{
 
     static async setPayload(jsonFileName){
         try {
-             const projectRoot = path.resolve(__dirname, '..');
+           const projectRoot = path.resolve(__dirname, '..');
            const payloadPath = path.join(projectRoot, 'apiPayloads', jsonFileName+".json");
             if (!fs.existsSync(payloadPath)) {
            throw new Error(`Payload file not found: ${payloadPath}`);
@@ -46,14 +49,30 @@ class APIHelper{
             try {
                 await this.addHeaders("Content-Type", "application/json");
                 this.response = await axios.post(this.apiURL, this.reqPayload, {
-               headers: await this.getHeadersObject()
+                headers: await this.getHeadersObject()
         });
+        this.saveResponseDetails(this.response);
     } catch (err) {
         console.log("Error While Sending POST Request", err);
         response = err.response;
     }
 
     }
+
+    static async saveResponseDetails(response){
+        this.responseCode=response.status;
+    } 
+
+    static async verifyResponseCode(expectedStatus) {
+    const actualStatus = this.responseCode;
+    assert.strictEqual(
+        actualStatus,
+        expectedStatus,
+        `Expected status ${expectedStatus} but got ${actualStatus}`
+    );
+    logger.info(`Response status ${actualStatus} matches expected ${expectedStatus}`);
+}
+
 
 
 }
