@@ -1,6 +1,9 @@
 const path=require('path');
 const fs=require('fs');
+const winston=require('winston');
 const { setDynamicDataFilePath, setExecutionId } = require('../utils/dynamicDataHelper');
+const { logger, createTestLogger } = require('../utils/loggerHelper');
+
 
 class BeforeAction {
 
@@ -26,6 +29,11 @@ static async beforTestConfig(scenario){
  if(!fs.existsSync(BeforeAction.currentExeIdFolderPath)){
     fs.mkdirSync(BeforeAction.currentExeIdFolderPath, {recursive: true});
  }
+ const logsFilePath=createTestLogger(BeforeAction.currentExeIdFolderPath);
+ logger.add(new winston.transports.File({
+    filename: logsFilePath,
+    level: 'info'
+ }));
  console.log(`Test Result Folder Created : ${BeforeAction.resultTimeStampFolderPath} for Test Case ${testName}`);
  console.log(`--------------  Executing Scenario ${scenarioName} --------------------`)
 }
