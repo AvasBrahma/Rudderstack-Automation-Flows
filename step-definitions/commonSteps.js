@@ -6,4 +6,5 @@ Given('User enters username and password and logs in to the RudderStack Dashboar
     logger.info(`Validating User able to login to Rudder Stack Dashboard`);
     let authPage = new AuthPageObject(browser);
     await authPage.navigateToHomePage();
+    logger.info(`User Successfully able to login to Rudder Stack Dashboard`);
 });
