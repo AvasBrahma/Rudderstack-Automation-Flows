@@ -1,17 +1,17 @@
-Feature: Rudder Stack Automation Flow
+Feature: Validating HTTP API Request from RudderStack source to destination webhook and verifying delivery status
 
 
-@RudderStack
-Scenario: Verify rudder stack automation flow and verify api
-Given Navigate to the home page
-When Read 'Data Plane' and Save as 'DataPlane' from the Rudder Stack Dashboards
-When Read 'Write Key' and Save as 'WriteKey' from the Rudder Stack Dashboards
-Then Send a HTTP POST API request to 'identify' with 'IDENTIFY' payload and Verify Response Code
-Then Send a HTTP POST API request to 'track' with 'TRACK' payload and Verify Response Code
-Then Send a HTTP POST API request to 'page' with 'PAGE' payload and Verify Response Code
-Then Send a HTTP POST API request to 'screen' with 'SCREEN' payload and Verify Response Code
-Then Send a HTTP POST API request to 'group' with 'GROUP' payload and Verify Response Code
-Then Send a HTTP POST API request to 'alias' with 'ALIAS' payload and Verify Response Code
-Then Send a HTTP POST API request to 'batch' with 'BATCH' payload and Verify Response Code
-When Click on the Webhook Destination 'Webhook avas' and Click on the Tab 'Events'
-Then Read and Save the count of delivered and failed events
+@RudderStack @test
+Scenario: Verify user can send HTTP request from source write key and validate event delivery and failed count 
+Given User enters username and password and logs in to the RudderStack Dashboard
+When User reads the 'Data Plane' value from the RudderStack Dashboard and saves it as 'DataPlane'
+And User reads the 'Write Key' value from the RudderStack Dashboard and saves it as 'WriteKey'
+And User sends an HTTP POST request to 'identify' with 'IDENTIFY' payload and verifies the response code
+And User sends an HTTP POST request to 'track' with 'TRACK' payload and verifies the response code
+And User sends an HTTP POST request to 'page' with 'PAGE' payload and verifies the response code
+And User sends an HTTP POST request to 'screen' with 'SCREEN' payload and verifies the response code
+And User sends an HTTP POST request to 'group' with 'GROUP' payload and verifies the response code
+And User sends an HTTP POST request to 'alias' with 'ALIAS' payload and verifies the response code
+And User sends an HTTP POST request to 'batch' with 'BATCH' payload and verifies the response code
+When User clicks on the Webhook Destination 'Webhook avas' and navigates to the 'Events' tab
+Then User reads and saves the count of delivered and failed events

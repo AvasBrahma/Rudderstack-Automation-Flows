@@ -2,7 +2,7 @@ const { Given, When, Then } = require('@cucumber/cucumber');
 const RudderStackPageObject = require('../pageobjects/rudderStackPageObject');
 
 
-When('Read {string} and Save as {string} from the Rudder Stack Dashboards', async (propertyName, keyName) => {
+When('User reads the {string} value from the RudderStack Dashboard and saves it as {string}', async (propertyName, keyName) => {
     let rudderStack = new RudderStackPageObject(browser);
     if(propertyName=='Data Plane'){
       await rudderStack.readDataPlaneAndSave(keyName);
@@ -11,18 +11,18 @@ When('Read {string} and Save as {string} from the Rudder Stack Dashboards', asyn
     }
 });
 
-Then('Send a HTTP POST API request to {string} with {string} payload and Verify Response Code', async (endPointName, payloadName) => {
+Then('User sends an HTTP POST request to {string} with {string} payload and verifies the response code', async (endPointName, payloadName) => {
     let rudderStack = new RudderStackPageObject(browser);
     await rudderStack.sendHTTPPostRequest(endPointName, payloadName);
 
 });
 
-When('Click on the Webhook Destination {string} and Click on the Tab {string}', async (webHookDestinationName, tabName) => {
+When('User clicks on the Webhook Destination {string} and navigates to the {string} tab', async (webHookDestinationName, tabName) => {
     let rudderStack = new RudderStackPageObject(browser);
     await rudderStack.goToWebHooksAndClickTab(webHookDestinationName, tabName);
 });
 
-Then('Read and Save the count of delivered and failed events', async () => {
+Then('User reads and saves the count of delivered and failed events', async () => {
     let rudderStack = new RudderStackPageObject(browser);
     await rudderStack.readAndSaveDeliveredCounts();
     await rudderStack.readAndSaveFailedEvents();
