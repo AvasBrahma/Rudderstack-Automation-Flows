@@ -1,5 +1,4 @@
 name: RudderStack Automation Pipeline
-
 on:
   push:
     branches: [ "master" ]
@@ -28,7 +27,8 @@ jobs:
     - run: npm run build --if-present
     - name: Kill any existing Chrome processes
       run: |
-        pkill chrome || true
-        pkill chromium || true
-        rm -rf /tmp/chrome-* || true
+          pkill chrome || true
+          pkill chromium || true
+          rm -rf /tmp/chrome-user-data-* || true
+          sleep 2
     - run: npm test
