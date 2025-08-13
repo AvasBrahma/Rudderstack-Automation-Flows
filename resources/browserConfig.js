@@ -1,7 +1,7 @@
 const browserOptions = {
     chrome: { 'goog:chromeOptions': { 
         args: [
-            // '--headless=new',
+            '--headless=new',
             '--start-maximized',
             '--no-sandbox',
             '--disable-dev-shm-usage',
