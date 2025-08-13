@@ -1,11 +1,10 @@
-require("dotenv").config();
 const { WDioHelper }=require('../utils/wdioHelper');
 const { logger } = require('../utils/loggerHelper');
+const { config } = require('winston');
 
 class AuthPageObject {
     constructor(browserInstance) {
         this.browser = browserInstance;
-        this.url = process.env.URL;
         this.emailIdCssSel="#text-input-email";
         this.passwordCssSel="#text-input-password";
         this.logInButtonXPath="//button[@type='button']/span[normalize-space(text())='Log in']";
@@ -14,19 +13,24 @@ class AuthPageObject {
     }
 
     async navigateToHomePage() {
-        await this.browser.url(this.url);
+        try {
+        await this.browser.url(global.config.url);
         await WDioHelper.takeScreenshot("homePage");
         await this.login();
         await this.skip2FA();
-        await this.goToDashBoard();
+        await this.goToDashBoard();    
+        } catch (error) {
+            throw new Error(`Fail: Error while user trying to login to an application`, error.message);
+        }
     }
 
     async login() {
         try {
-        await this.browser.$(this.emailIdCssSel).setValue(process.env.email);
-        await this.browser.$(this.passwordCssSel).setValue(process.env.password);
+        await this.browser.$(this.emailIdCssSel).setValue(global.config.email);
+        await this.browser.$(this.passwordCssSel).setValue(global.config.password);
         await WDioHelper.takeScreenshot("loginPage");
         await this.browser.$(this.logInButtonXPath).click();  
+        logger.info(`User enter email and password and click login button`);
         } catch (error) {
             throw new Error(`Fail: Error while entering username & password in login page`, error.message);
         }
@@ -39,6 +43,7 @@ class AuthPageObject {
           await skipFALinkEle.waitForClickable();
           await WDioHelper.takeScreenshot("skip2FAWarn");
           await skipFALinkEle.click(); 
+          logger.info(`User skip 2FA`);
         } catch (error) {
             throw new Error(`Fail: Error while skipping 2FA Alert`, error.message);
         }
@@ -51,6 +56,7 @@ class AuthPageObject {
         await goToDashBoardEle.waitForClickable();
         await WDioHelper.takeScreenshot("goToDashBoardButton");
         await goToDashBoardEle.click();
+        logger.info(`User Navigated to Dashboard`);
         } catch (error) {
             throw new Error(`Fail: Error while trying to click Go To DashBoard Link`, error.message);
         }

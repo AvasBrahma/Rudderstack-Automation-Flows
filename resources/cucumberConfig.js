@@ -1,18 +1,24 @@
 const {Before, BeforeAll, AfterAll, After, setDefaultTimeout } = require("@cucumber/cucumber");
-const { browserSetup, browserOptions } = require('./browserConfig');
+const { getBrowserSetup, browserOptions } = require('./browserConfig');
 const { remote } = require('webdriverio');
 const BeforeAction = require('./BeforeAction');
 const { logger } = require('../utils/loggerHelper');
+const { createConfig } = require('./ConfigDetails');
 
 setDefaultTimeout(60000);
+let config;
 
 BeforeAll(async () => {
-    logger.info(`Browser is set as ${browserSetup.browserName}`);
+    config = createConfig();
+    global.config = config;
+    logger.info(`Test Executing in Environment: ${config.env}`);
+    logger.info(`Browser: ${config.browser}`);
     logger.info(`..................Setting up Results folder...........`);
     await BeforeAction.runBeforeAllConfig();
 });
 
 Before(async (scenario) => {
+const browserSetup = getBrowserSetup();
    global.browser = await remote({
     logLevel: 'error',
     capabilities: { browserName: browserSetup.browserName,
@@ -21,7 +27,7 @@ Before(async (scenario) => {
   await BeforeAction.beforTestConfig(scenario);
 });
 
-After(async function (scenario) {
+After(async function () {
    logger.clear();
    if(global.browser) {
         try {
