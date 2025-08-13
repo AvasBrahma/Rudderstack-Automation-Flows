@@ -2,11 +2,13 @@ const {Before, BeforeAll, AfterAll, After, setDefaultTimeout } = require("@cucum
 const { browserSetup, browserOptions } = require('./browserConfig');
 const { remote } = require('webdriverio');
 const BeforeAction = require('./BeforeAction');
+const { logger } = require('../utils/loggerHelper');
 
 setDefaultTimeout(60000);
 
 BeforeAll(async () => {
-    console.log(`Browser is set as ${browserSetup.browserName}`);
+    logger.info(`Browser is set as ${browserSetup.browserName}`);
+    logger.info(`..................Setting up Results folder...........`);
     await BeforeAction.runBeforeAllConfig();
 });
 
@@ -19,6 +21,25 @@ Before(async (scenario) => {
   await BeforeAction.beforTestConfig(scenario);
 });
 
+After(async function (scenario) {
+   logger.clear();
+   if(global.browser) {
+        try {
+            await browser.deleteCookies();
+            await browser.execute(() => {
+            window.localStorage.clear();
+            window.sessionStorage.clear();
+        });
+        } catch (err) {
+            console.error("Error clearing cookies:", err);
+        }
+        await global.browser.deleteSession();
+        global.browser = null;
+    }
+    });
+
 AfterAll(async () => {
-    await global.browser.deleteSession();
+    if(global.browser){
+     await global.browser.deleteSession();
+    }
 });
