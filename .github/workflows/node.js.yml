@@ -32,3 +32,8 @@ jobs:
           rm -rf /tmp/chrome-user-data-* || true
           sleep 2
     - run: npm test
+    - name: Upload Cucumber HTML report
+      uses: actions/upload-artifact@v4
+      with:
+        name: cucumber-html-report
+        path: ./reports/cucumber-report
