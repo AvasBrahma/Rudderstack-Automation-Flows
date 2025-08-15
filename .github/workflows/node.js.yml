@@ -5,12 +5,19 @@ on:
   pull_request:
     branches: [ "master" ]
   schedule:
-    - cron: '0 5 * * *'  # Runs daily at 05:00 UTC
+    - cron: '30 10 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+      
+    env:
+      AUTH_USER_EMAIL: ${{ secrets.AUTH_USER_EMAIL }}
+      AUTH_USER_PASSWORD: ${{ secrets.AUTH_USER_PASSWORD }}
+      MAIL_FROM: ${{ secrets.MAIL_FROM }}
+      MAIL_TO: ${{ secrets.MAIL_TO }}
 
     strategy:
       matrix:
@@ -37,3 +44,5 @@ jobs:
       with:
         name: cucumber-html-report
         path: ./reports
+    - name: Send Email with Cucumber HTML Report
+      run: node utils/sendReport.js
