@@ -2,13 +2,21 @@ const {Before, BeforeAll, AfterAll, After, setDefaultTimeout } = require("@cucum
 const { getBrowserSetup, browserOptions } = require('./browserConfig');
 const { remote } = require('webdriverio');
 const BeforeAction = require('./BeforeAction');
+const AfterAction = require('./AfterAction');
 const { logger } = require('../utils/loggerHelper');
 const { createConfig } = require('./ConfigDetails');
 
 setDefaultTimeout(60000);
 let config;
+let results = {
+  passed: 0,
+  failed: 0,
+  duration: 0
+};
+let startTime;
 
 BeforeAll(async () => {
+    startTime = Date.now();
     config = createConfig();
     global.config = config;
     logger.info(`Test Executing in Environment: ${config.env}`);
@@ -27,8 +35,13 @@ const browserSetup = getBrowserSetup();
   await BeforeAction.beforTestConfig(scenario);
 });
 
-After(async function () {
+After(async function (scenario) {
    logger.clear();
+   if (scenario.result.status === 'PASSED' || scenario.result.status === 'passed') {
+    results.passed++;
+    }else if (scenario.result.status === 'FAILED' || scenario.result.status === 'failed') {
+    results.failed++;
+  }
    if(global.browser) {
         try {
             await browser.deleteCookies();
@@ -48,4 +61,6 @@ AfterAll(async () => {
     if(global.browser){
      await global.browser.deleteSession();
     }
+    results.duration = await AfterAction.formatDuration(Date.now() - startTime);
+    await AfterAction.generateSummaryReport(results);
 });

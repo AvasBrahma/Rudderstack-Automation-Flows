@@ -9,10 +9,12 @@ class BeforeAction {
 
 static resultTimeStampFolderPath;
 static currentExeIdFolderPath;
+static projectResultDir;
 
 static async runBeforeAllConfig(){
     const timeStamp=new Date().toISOString().replace(/[-:.]/g,'');
     const projDir=path.resolve(process.cwd(),'reports');
+    BeforeAction.projectResultDir=projDir;
     BeforeAction.resultTimeStampFolderPath=path.join(projDir, `${timeStamp}`);
     console.log(`Test Execution Result Folder Created : ${BeforeAction.resultTimeStampFolderPath}`);
     await setDynamicDataFilePath(BeforeAction.resultTimeStampFolderPath);
