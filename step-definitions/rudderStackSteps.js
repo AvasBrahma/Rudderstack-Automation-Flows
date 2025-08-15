@@ -11,12 +11,6 @@ When('User reads the {string} value from the RudderStack Dashboard and saves it 
     }
 });
 
-Then('User sends an HTTP POST request to {string} with {string} payload and verifies the response code', async (endPointName, payloadName) => {
-    let rudderStack = new RudderStackPageObject(browser);
-    await rudderStack.sendHTTPPostRequest(endPointName, payloadName);
-
-});
-
 When('User clicks on the Webhook Destination {string} and navigates to the {string} tab', async (webHookDestinationName, tabName) => {
     let rudderStack = new RudderStackPageObject(browser);
     await rudderStack.navigateToTabUnderDestination(webHookDestinationName, tabName);

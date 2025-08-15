@@ -12,6 +12,7 @@ class APIHelper{
     static response="";
     static headersMap = new Map();
     static responseCode=null;
+    static responseBody="";
 
     static async setBaseURL(baseURL){
        this.baseURL=baseURL;
@@ -64,8 +65,8 @@ class APIHelper{
     } 
 
     static async verifyResponseCode(expectedStatus) {
-    const actualStatus = this.responseCode;
-    assert.strictEqual(
+        const actualStatus = this.responseCode;
+        assert.strictEqual(
         actualStatus,
         expectedStatus,
         `Expected status ${expectedStatus} but got ${actualStatus}`
