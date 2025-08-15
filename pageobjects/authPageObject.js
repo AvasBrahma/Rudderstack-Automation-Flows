@@ -1,6 +1,5 @@
 const { WDioHelper }=require('../utils/wdioHelper');
 const { logger } = require('../utils/loggerHelper');
-const { config } = require('winston');
 
 class AuthPageObject {
     constructor(browserInstance) {
