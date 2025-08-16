@@ -13,6 +13,8 @@ This framework supports UI automation, API testing, dynamic test data management
 7. Cucumber HTML Reports for execution insights
 8. CI/CD Ready with GitHub Actions
 9. Added winston logger for handling logs
+10. Daily Email Report Notification using Nodemailer (Cucumber HTML report attached)
+11. Automated Scheduler with Cron Job for daily execution reports
 
 ## 🛠️ How to Use
 1. Clone the Repository
