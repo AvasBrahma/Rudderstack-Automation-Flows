@@ -65,17 +65,17 @@ async sendHTTPPostRequest(endpointName, payloadName){
     try {
     logger.info(`User Sending HTTP POST Request in an Endpoint: ${endpointName}`);
     let baseURL=await getTestData("DataPlane");
-    let basicAuthValue=await getTestData("WriteKey");
-    const username = basicAuthValue;
-    const password = "";
-    const credentials = `${username}:${password}`;
-    const encodedCredentials = Buffer.from(credentials).toString('base64');
-    await APIHelper.setBaseURL(baseURL);
-    await APIHelper.setEndPoint(`/v1/${endpointName}`);
-    await APIHelper.addHeaders('Authorization',"Basic "+encodedCredentials);
-    await APIHelper.setPayload(payloadName);
-    await APIHelper.sendPOSTReq();
-    await APIHelper.verifyResponseCode(200);
+    let basicAuthUserName=await getTestData("WriteKey");
+    const api = new APIHelper();
+    api.setBaseURL(baseURL);
+    api.setAPIVersion("/v1");
+    api.setEndPoint(endpointName);
+    const basicAuthValue=APIHelper.getBasicAuthHeader(basicAuthUserName,"");
+    api.addHeader("Authorization", basicAuthValue);
+    api.addHeader("Content-Type", "application/json");
+    await api.setPayloadFromFile(payloadName);
+    await api.sendPOSTRequest("POST");
+    api.verifyStatusCode(200);
     } catch (error) {
     throw new Error(`Error while trying to Send HTTP POST Request in Endpoint ${endpointName}, ${error.message}`);   
     }
