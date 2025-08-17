@@ -4,6 +4,7 @@ const { saveTestData, getTestData}=require('../utils/dynamicDataHelper');
 const { APIHelper } = require('../utils/apiHelper');
 const assert = require('assert');
 const { logger } = require("../utils/loggerHelper");
+const { RSCollectHelper } = require("../utils/rsCollectHelper");
 
 class RudderStackPageObject {
     constructor(browserInstance) {
@@ -16,46 +17,25 @@ class RudderStackPageObject {
          this.desEventCountXpath="//span[text()='{EventName}']/following-sibling::div/h2/span";
          this.eventsDetailsFailedRadioToggleButton="//div[@class='ant-segmented-item-label' and @title='Failures']";
          this.tableAllRowsColumnDataXPath="//tbody/tr/td[@class='ant-table-cell'][{columnNumber}]/span";
+         this.refreshButtonXpath="//span[text()='Refresh']/parent::button";
     }
-
-    async saveWriteKey(keyName){
-         try {
-             let writeKeyText= await WDioHelper.getText(this.writeKeySpanXpath);
-             if(writeKeyText.trim()!=""&&writeKeyText!=null){
-             writeKeyText = writeKeyText.split(" ")[2];
-             await saveTestData(keyName, writeKeyText);
-             await WDioHelper.takeScreenshot("WriteKey");
-             logger.info(`User Successfully Save Write Key`);
-             }else{
-            logger.error(`Got Write Key as Null or Blank, WriteKey: ${writeKeyText}`);
-        }
-            
-    } catch (error) {
-        throw new Error(`Error while trying to save write key, ${error.message}`);
-    }
-
-    }
-
     async handlingRudderStackUserSaveAction(elementName, keyName){
         try {
-        let textLocator="";
-        if(elementName=="Data Plane"){
-            textLocator=this.dataPlaneSpanXpath;
-            await WDioHelper.waitForElementVisible(this.askAIBetaPopUp, "AskAIBetaPopUp");
-            const popupIconEl = await this.browser.$(this.askAIBetaPopUp);
-           if(await popupIconEl.isDisplayed()) {
-             await popupIconEl.click();
-          }
-        }else if(elementName=="Delivered"){
-            textLocator=this.desEventCountXpath.replace("{EventName}","Delivered");
-            await WDioHelper.waitForElementVisible(textLocator, "DeliveryCount");
-        }else if(elementName=="Failed"){
-             textLocator=this.desEventCountXpath.replace("{EventName}",'Failed');
+        let keyValue=null;
+        if(elementName=="Write Key"){
+            keyValue=await RSCollectHelper.getWriteKey();
+        }else if(elementName=="Data Plane"){
+            keyValue=await RSCollectHelper.getDataPlane();
+        }else if(elementName=="Delivered"||elementName=="Failed"){
+            keyValue=await RSCollectHelper.webHookGetEventsCount(elementName);
         }
-        let textFound=await WDioHelper.getText(textLocator);
-        await saveTestData(keyName, textFound);
-        await WDioHelper.takeScreenshot(elementName);   
-        logger.info(`User Saving ${elementName} value as key ${keyName}`);    
+        if(keyValue!=null){
+         await saveTestData(keyName, keyValue);
+         await WDioHelper.takeScreenshot(elementName);   
+         logger.info(`User Saving ${elementName} value as key ${keyName}`); 
+        }else{
+           throw new Error(`Error Value Found as Null for ${elementName}, ${error.message}`);
+        }  
         } catch (error) {
           throw new Error(`Error while trying to read and Save ${elementName}, ${error.message}`);
         }
@@ -98,7 +78,28 @@ async navigateToTabUnderDestination(webHookName, tabName){
     }else{
         console.log(`Issue while clicking Web Hook Destination Tab ${tabName}`);
     }
+}
 
+
+
+async verifyEventsCount(previousDeliveryCount,previousFailedCount,expectedTotalRequests){
+    let durationOfWait=2;
+    logger.info(`Waiting up to ${durationOfWait} minutes for Webhook events count to reflect`);
+    await browser.pause(durationOfWait * 60 * 1000);
+    logger.info(`Clicking Refresh Button`);
+    await this.browser.$(this.refreshButtonXpath).click(); 
+    let currentDeliverdCount=await RSCollectHelper.webHookGetEventsCount("Delivered");
+    let currentFailedCount=await RSCollectHelper.webHookGetEventsCount("Failed");
+    let numPreDeliveredCount=parseInt(previousDeliveryCount);
+    let numPreFailedCount=parseInt(previousFailedCount);
+    await WDioHelper.takeScreenshot("AfterRequestEventsCount");
+    const deliveredDiff = currentDeliverdCount - numPreDeliveredCount;
+    const failedDiff = currentFailedCount - numPreFailedCount;
+    const totalDiff = deliveredDiff + failedDiff;
+    if (totalDiff !== expectedTotalRequests){
+        throw new Error(`Mismatch in total requests. Expected ${expectedTotalRequests}, but got ${totalDiff}`);
+    }
+    logger.info(`Validation Passed: Delivered + Failed = ${totalDiff}, matches expected ${expectedTotalRequests}`);
 }
 
 }

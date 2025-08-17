@@ -6,7 +6,7 @@ const AfterAction = require('./AfterAction');
 const { logger } = require('../utils/loggerHelper');
 const { createConfig } = require('./ConfigDetails');
 
-setDefaultTimeout(60000);
+setDefaultTimeout(10 * 60 * 1000);
 let config;
 let results = {
   passed: 0,

@@ -9,6 +9,7 @@ class AuthPageObject {
         this.logInButtonXPath="//button[@type='button']/span[normalize-space(text())='Log in']";
         this.hyperLinkIWillDoLater="//a[text()=\"I'll do this later\"]";
         this.goToDashBoardButton="//button[@type='button']/span[normalize-space(text())='Go to dashboard']";
+        this.askAIBetaPopUp="//button[@type='button' and @aria-label='Close']";
     }
 
     async navigateToHomePage() {
@@ -17,7 +18,8 @@ class AuthPageObject {
         await WDioHelper.takeScreenshot("homePage");
         await this.login();
         await this.skip2FA();
-        await this.goToDashBoard();    
+        await this.goToDashBoard(); 
+        await this.closeAskAIPopUp();   
         } catch (error) {
             throw new Error(`Fail: Error while user trying to login to an application`, error.message);
         }
@@ -55,11 +57,20 @@ class AuthPageObject {
         await goToDashBoardEle.waitForClickable();
         await WDioHelper.takeScreenshot("goToDashBoardButton");
         await goToDashBoardEle.click();
-        logger.info(`User Navigated to Dashboard`);
+        logger.info(`User Click Go to Dashboard`);
         } catch (error) {
             throw new Error(`Fail: Error while trying to click Go To DashBoard Link`, error.message);
         }
     }
+
+    async closeAskAIPopUp(){
+    await WDioHelper.waitForElementVisible(this.askAIBetaPopUp, "AskAIBetaPopUp");
+    const popupIconEl = await this.browser.$(this.askAIBetaPopUp);
+    if(await popupIconEl.isDisplayed()) {
+        await popupIconEl.click();
+        logger.info(`User Navigated to Dashboard Successfully`);
+        await WDioHelper.takeScreenshot("RudderStackDashBoard");
+    }}
 }
 
 module.exports = AuthPageObject;
