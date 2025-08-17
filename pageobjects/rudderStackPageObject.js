@@ -88,7 +88,8 @@ async verifyEventsCount(previousDeliveryCount,previousFailedCount,expectedTotalR
     logger.info(`Waiting up to ${durationOfWait} minutes for Webhook events count to reflect`);
     await browser.pause(durationOfWait * 60 * 1000);
     logger.info(`Clicking Refresh Button`);
-    await this.browser.$(this.refreshButtonXpath).click(); 
+    await this.browser.$(this.refreshButtonXpath).click();
+    await browser.pause(2000);
     let currentDeliverdCount=await RSCollectHelper.webHookGetEventsCount("Delivered");
     let currentFailedCount=await RSCollectHelper.webHookGetEventsCount("Failed");
     let numPreDeliveredCount=parseInt(previousDeliveryCount);
@@ -100,8 +101,7 @@ async verifyEventsCount(previousDeliveryCount,previousFailedCount,expectedTotalR
     if (totalDiff !== expectedTotalRequests){
         throw new Error(`Mismatch in total requests. Expected ${expectedTotalRequests}, but got ${totalDiff}`);
     }
-    logger.info(`Validation Passed: Delivered + Failed = ${totalDiff}, matches expected ${expectedTotalRequests}`);
-        
+    logger.info(`Validation Passed: Delivered + Failed = ${totalDiff}, matches expected ${expectedTotalRequests}`);     
     } catch (error) {
         throw new Error(`Error While verifing delivery events count, ${error.message}`);
     }
