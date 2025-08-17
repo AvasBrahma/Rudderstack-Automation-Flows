@@ -6,13 +6,14 @@ This framework supports UI automation, API testing, dynamic test data management
 ## ✨ Features
 1. End-to-End UI Testing using WebdriverIO
 2. Behavior-Driven Development (BDD) with Cucumber.js
-3. Screenshots in the reports directory
-4. API Testing with Axios
-5. Dynamic Test Data Handling using a custom TestData Helper (save & retrieve values across steps)
-6. Multi-Environment Support (dev, qa, prod) via environment-specific config & .env files
-7. Cucumber HTML Reports for execution insights
-8. CI/CD Ready with GitHub Actions
-9. Added winston logger for handling logs
+3. API Testing with Axios
+4. Dynamic Test Data Handling using a custom TestData Helper (save & retrieve values across steps)
+5. Multi-Environment Support (dev, qa, prod) via environment-specific config & .env files
+6. Cucumber HTML Reports for execution insights
+7. CI/CD Ready with GitHub Actions
+8. Added winston logger for handling logs and screenshots in the reports directory
+9. Daily Email Report Notification using Nodemailer (Cucumber HTML report attached)
+10. Automated Scheduler with Cron Job for daily execution reports
 
 ## 🛠️ How to Use
 1. Clone the Repository
