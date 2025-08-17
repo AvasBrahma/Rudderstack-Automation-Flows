@@ -36,7 +36,6 @@ const browserSetup = getBrowserSetup();
 });
 
 After(async function (scenario) {
-   logger.clear();
    if (scenario.result.status === 'PASSED' || scenario.result.status === 'passed') {
     results.passed++;
     }else if (scenario.result.status === 'FAILED' || scenario.result.status === 'failed') {

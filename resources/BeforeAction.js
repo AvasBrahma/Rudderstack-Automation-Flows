@@ -18,6 +18,11 @@ static async runBeforeAllConfig(){
     BeforeAction.resultTimeStampFolderPath=path.join(projDir, `${timeStamp}`);
     console.log(`Test Execution Result Folder Created : ${BeforeAction.resultTimeStampFolderPath}`);
     await setDynamicDataFilePath(BeforeAction.resultTimeStampFolderPath);
+    const logsFilePath=createTestLogger(BeforeAction.resultTimeStampFolderPath);
+    logger.add(new winston.transports.File({
+    filename: logsFilePath,
+    level: 'info'
+ }));
 }
 
 
@@ -31,11 +36,6 @@ static async beforTestConfig(scenario){
  if(!fs.existsSync(BeforeAction.currentExeIdFolderPath)){
     fs.mkdirSync(BeforeAction.currentExeIdFolderPath, {recursive: true});
  }
- const logsFilePath=createTestLogger(BeforeAction.currentExeIdFolderPath);
- logger.add(new winston.transports.File({
-    filename: logsFilePath,
-    level: 'info'
- }));
  console.log(`Test Result Folder Created : ${BeforeAction.resultTimeStampFolderPath} for Test Case ${testName}`);
  console.log(`--------------  Executing Scenario ${scenarioName} --------------------`)
 }

@@ -83,6 +83,7 @@ async navigateToTabUnderDestination(webHookName, tabName){
 
 
 async verifyEventsCount(previousDeliveryCount,previousFailedCount,expectedTotalRequests){
+    try {
     let durationOfWait=2;
     logger.info(`Waiting up to ${durationOfWait} minutes for Webhook events count to reflect`);
     await browser.pause(durationOfWait * 60 * 1000);
@@ -100,6 +101,11 @@ async verifyEventsCount(previousDeliveryCount,previousFailedCount,expectedTotalR
         throw new Error(`Mismatch in total requests. Expected ${expectedTotalRequests}, but got ${totalDiff}`);
     }
     logger.info(`Validation Passed: Delivered + Failed = ${totalDiff}, matches expected ${expectedTotalRequests}`);
+        
+    } catch (error) {
+        throw new Error(`Error While verifing delivery events count, ${error.message}`);
+    }
+    
 }
 
 }
